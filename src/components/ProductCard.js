@@ -7,19 +7,18 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
 
   const discountPercent =
-    product.showDiscount && product.mrp
-      ? Math.round(((product.mrp - product.price) / product.mrp) * 100)
+    product?.showDiscount && product?.mrp
+      ? Math.round(((Number(product.mrp) - Number(product.price)) / Number(product.mrp)) * 100)
       : 0;
 
-  // Yeh function check karke external URL ho to direct use karega, warna utility se import karega
-  const getImageSrc = (img) =>
-    img.startsWith("http") ? img : getProductImage(img);
-
-  const decreaseQty = () => {
-    if (quantity > 1) setQuantity(quantity - 1);
+  // http URL to direct, filename to asset resolver
+  const imgSrc = (img) => {
+    if (!img) return "";
+    return String(img).startsWith("http") ? img : getProductImage(img);
   };
 
-  const increaseQty = () => setQuantity(quantity + 1);
+  const decreaseQty = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+  const increaseQty = () => setQuantity((q) => q + 1);
 
   return (
     <div className="product-card">
@@ -28,11 +27,10 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
         onClick={() => onQuickView(product)}
         style={{ cursor: "pointer" }}
       >
-        <img src={getImageSrc(product.images[0])} alt={product.name} />
-        {product.bestseller && <span className="badge bestseller">Bestseller</span>}
-        {discountPercent > 0 && (
-          <span className="badge discount">{discountPercent}% OFF</span>
-        )}
+        <img src={imgSrc(product?.images?.[0])} alt={product?.name || "Product"} />
+        {product?.bestseller && <span className="badge bestseller">Bestseller</span>}
+        {discountPercent > 0 && <span className="badge discount">{discountPercent}% OFF</span>}
+
         <button
           className="icon-btn quickview-icon-btn"
           onClick={(e) => {
@@ -47,15 +45,15 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
       </div>
 
       <div className="product-info">
-        <h4 className="product-name">{product.name}</h4>
+        <h4 className="product-name">{product?.name}</h4>
         <div className="price-block">
-          {product.showDiscount && product.mrp ? (
+          {product?.showDiscount && product?.mrp ? (
             <>
-              <span className="mrp">₹{product.mrp}</span>
-              <span className="price">₹{product.price}</span>
+              <span className="mrp">₹{product?.mrp}</span>
+              <span className="price">₹{product?.price}</span>
             </>
           ) : (
-            <span className="price">₹{product.price}</span>
+            <span className="price">₹{product?.price}</span>
           )}
         </div>
       </div>
@@ -70,11 +68,7 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
           −
         </button>
         <span className="qty-number">{quantity}</span>
-        <button
-          className="qty-btn"
-          onClick={increaseQty}
-          aria-label="Increase quantity"
-        >
+        <button className="qty-btn" onClick={increaseQty} aria-label="Increase quantity">
           +
         </button>
       </div>

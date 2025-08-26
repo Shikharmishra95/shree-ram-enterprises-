@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { getProductImage } from "../utils/imageLoader";
 import "./CartPopup.css";
 import { FaTimes } from "react-icons/fa";
 
@@ -9,25 +10,31 @@ function CartPopup({ onClose }) {
 
   const { subtotal, deliveryCharge, total } = getCartTotals(Number(deliveryDistance) || 0);
 
-  // WhatsApp checkout handler
+  // Helper: resolve filename or http URL
+  const imgSrc = (img) => {
+    if (!img) return "";
+    return String(img).startsWith("http") ? img : getProductImage(img);
+  };
+
   const handleCheckout = () => {
-    const phoneNumber = "918840542840"; // Apna WhatsApp number
+    const phoneNumber = "91XXXXXXXXXX"; // WhatsApp number without +
     let message = "🛒 *New Order*\n\n";
-    cartItems.forEach(item => {
-      message += `• ${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}\n`;
+    cartItems.forEach((item) => {
+      message += `• ${item.name} (x${item.quantity}) - ₹${Number(item.price) * Number(item.quantity)}\n`;
     });
     message += `\n*Total:* ₹${total.toFixed(2)}`;
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, "_blank");
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
   };
 
   return (
     <div className="cart-popup-overlay" onClick={onClose}>
       <div className="cart-popup" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
         <div className="cart-popup-header">
           <h3>🛒 Your Cart</h3>
-          <button className="close-btn" onClick={onClose}><FaTimes /></button>
+          <button className="close-btn" onClick={onClose}>
+            <FaTimes />
+          </button>
         </div>
 
         {cartItems.length === 0 ? (
@@ -36,23 +43,23 @@ function CartPopup({ onClose }) {
               src="https://img.icons8.com/ios/100/cccccc/shopping-cart--v1.png"
               alt="Empty"
             />
-            <p>Your cart is empty</p>
+            <p>No items in cart</p>
           </div>
         ) : (
           <>
-            {/* Items */}
             <div className="cart-items">
               {cartItems.map((item) => (
                 <div className="cart-row" key={item.id}>
                   <img
-                    src={item.images[0]}
-                    alt={item.name}
+                    src={imgSrc(item?.images?.[0])}
+                    alt={item?.name || "Cart item"}
                     className="cart-img"
                   />
+
                   <div className="cart-info">
-                    <div className="cart-prod-name">{item.name}</div>
+                    <div className="cart-prod-name">{item?.name}</div>
                     <div className="cart-prod-price">
-                      ₹{item.price}
+                      ₹{item?.price}
                       <span className="cart-prod-qty">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -61,25 +68,20 @@ function CartPopup({ onClose }) {
                           −
                         </button>
                         <span>{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
+                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                           +
                         </button>
                       </span>
                     </div>
                   </div>
-                  <button
-                    className="remove-btn"
-                    onClick={() => removeFromCart(item.id)}
-                  >
+
+                  <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
                     ✕
                   </button>
                 </div>
               ))}
             </div>
 
-            {/* Delivery Info */}
             <div className="delivery-panel">
               <label>
                 Delivery Distance (km):
@@ -92,18 +94,27 @@ function CartPopup({ onClose }) {
                 />
               </label>
               <div className="delivery-rule">
-                <b>Rules:</b> ₹2000+ → FREE, ≤10km → Free, ≤20km → ₹40, ≤50km → ₹70, Above 50km → ₹110
+                <b>Rules:</b> ₹2000+ → FREE, ≤10km Free, ≤20km ₹40, ≤50km ₹70, Above 50km ₹110
               </div>
             </div>
 
-            {/* Summary */}
             <div className="cart-summary">
-              <div><span>Subtotal</span><span>₹{subtotal.toFixed(2)}</span></div>
-              <div><span>Delivery</span><span>{deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}</span></div>
-              <div className="total"><span>Total</span><span>₹{total.toFixed(2)}</span></div>
+              <div>
+                <span>Subtotal</span>
+                <span>₹{subtotal.toFixed(2)}</span>
+              </div>
+              <div>
+                <span>Delivery</span>
+                <span className={deliveryCharge === 0 ? "free" : ""}>
+                  {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
+                </span>
+              </div>
+              <div className="total">
+                <span>Total</span>
+                <span className="cart-total">₹{total.toFixed(2)}</span>
+              </div>
             </div>
 
-            {/* Actions */}
             <div className="cart-popup-actions">
               <button className="checkout-btn" onClick={handleCheckout}>
                 Checkout via WhatsApp

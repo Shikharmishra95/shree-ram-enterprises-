@@ -6,6 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { FaArrowLeft } from "react-icons/fa";
+import { getProductImage } from "../utils/imageLoader";
 import "./QuickView.css";
 
 function QuickView({ product, onClose, onAddToCart, onBuyNow }) {
@@ -22,9 +23,14 @@ function QuickView({ product, onClose, onAddToCart, onBuyNow }) {
   if (!product) return null;
 
   const discountPercent =
-    product.showDiscount && product.mrp
-      ? Math.round(((product.mrp - product.price) / product.mrp) * 100)
+    product?.showDiscount && product?.mrp
+      ? Math.round(((Number(product.mrp) - Number(product.price)) / Number(product.mrp)) * 100)
       : 0;
+
+  const imgSrc = (img) => {
+    if (!img) return "";
+    return String(img).startsWith("http") ? img : getProductImage(img);
+  };
 
   return (
     <AnimatePresence>
@@ -50,7 +56,7 @@ function QuickView({ product, onClose, onAddToCart, onBuyNow }) {
             ×
           </button>
 
-          <h2 className="product-title">{product.name}</h2>
+          <h2 className="product-title">{product?.name}</h2>
 
           <Swiper
             modules={[Navigation, Pagination]}
@@ -58,39 +64,42 @@ function QuickView({ product, onClose, onAddToCart, onBuyNow }) {
             slidesPerView={1}
             navigation
             pagination={{ clickable: true }}
-            loop={true}
+            loop
             initialSlide={0}
             onSwiper={(swiper) => {
               swiperRef.current = { swiper };
             }}
           >
-            {product.images.map((img, i) => (
+            {product?.images?.map((img, i) => (
               <SwiperSlide key={i}>
-                <img src={img} alt={product.name} />
+                <img src={imgSrc(img)} alt={product?.name || `Image ${i + 1}`} />
               </SwiperSlide>
             ))}
           </Swiper>
 
-          <p className="product-desc">{product.description}</p>
+          <p className="product-desc">{product?.description}</p>
 
           <div className="product-pricing">
-            {product.showDiscount && product.mrp ? (
+            {product?.showDiscount && product?.mrp ? (
               <>
-                <del>₹{product.mrp}</del>
-                <span className="price">₹{product.price}</span>
+                <del>₹{product?.mrp}</del>
+                <span className="price">₹{product?.price}</span>
                 {discountPercent > 0 && <span className="discount">{discountPercent}% OFF</span>}
               </>
             ) : (
-              <span className="price">₹{product.price}</span>
+              <span className="price">₹{product?.price}</span>
             )}
           </div>
 
           <div className="qty-control">
-            <button onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)} aria-label="Decrease quantity">
+            <button
+              onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+              aria-label="Decrease quantity"
+            >
               −
             </button>
             <span>{quantity}</span>
-            <button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity">
+            <button onClick={() => setQuantity((q) => q + 1)} aria-label="Increase quantity">
               +
             </button>
           </div>
