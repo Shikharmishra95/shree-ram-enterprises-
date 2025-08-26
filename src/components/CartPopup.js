@@ -17,7 +17,7 @@ function CartPopup({ onClose }) {
   };
 
   const handleCheckout = () => {
-    const phoneNumber = "91XXXXXXXXXX"; // WhatsApp number without +
+    const phoneNumber = "918840542840"; // WhatsApp number without +
     let message = "🛒 *New Order*\n\n";
     cartItems.forEach((item) => {
       message += `• ${item.name} (x${item.quantity}) - ₹${Number(item.price) * Number(item.quantity)}\n`;

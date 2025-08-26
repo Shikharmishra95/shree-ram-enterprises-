@@ -12,16 +12,21 @@ function CartPopup({ onClose }) {
   );
 
   // WhatsApp checkout
-  const handleCheckout = () => {
-    const phoneNumber = "918840542840"; // <-- apna WhatsApp number yahan daal, without +
-    let message = "🛒 *New Order*\n\n";
-    cartItems.forEach(item => {
-      message += `• ${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}\n`;
-    });
-    message += `\n*Total:* ₹${total.toFixed(2)}`;
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  };
+ const handleCheckout = () => {
+  const phoneNumber = "918840542840"; // without +, only digits
+  let message = "🛒 *New Order*\n\n";
+  cartItems.forEach(item => {
+    message += `• ${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}\n`;
+  });
+  message += `\n*Total:* ₹${total.toFixed(2)}`;
+
+  // ✅ Use api.whatsapp.com instead of wa.me
+  const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+  window.open(url, "_blank"); // or window.location.href = url;
+};
+
+
 
   return (
     <div className="cart-popup-overlay" onClick={onClose}>
