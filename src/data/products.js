@@ -81,7 +81,7 @@ const products = [
     name: "WonderSoft Hair Color Creme (Dark Brown WS4)",
     category: "Hair Care",
     subcategory: "Hair Color",
-    price: 50,
+    price: 60,
     mrp: 245,
     discount: 14,
     showDiscount: true,
@@ -166,29 +166,13 @@ const products = [
   ],
   "description": "Kaveri Easy Fast crème hair color in Natural Black with black sesame oil. Ammonia-free, provides 100% grey coverage, natural look, and long-lasting color in just 10 minutes."
 },
-{
-  "id": 10,
-  "name": "Kaveri Easy Fast Crème Hair Color (Burgundy)",
-  "category": "Hair Care",
-  "subcategory": "Hair Color",
-  "price": 20,
-  "mrp": 25,
-  "discount": 20,
-  "showDiscount": true,
-  "bestseller": false,
-  "featured": false,
-  "images": [
-    "IMG-20250812-WA0045.jpg",
-    "https://via.placeholder.com/300x300?text=Kaveri+Easy+Fast+Burgundy"
-  ],
-  "description": "Kaveri Easy Fast crème hair color in Burgundy with black sesame oil. No ammonia, provides vibrant long-lasting color, grey coverage, and soft, natural-looking hair in 20 minutes."
-},
+
 {
   "id": 11,
   "name": "Kaveri Crème Hair Color (Dark Brown 3)",
   "category": "Hair Care",
   "subcategory": "Hair Color",
-  "price": 70,
+  "price": 40,
   "mrp": 85,
   "discount": 18,
   "showDiscount": true,
@@ -465,7 +449,7 @@ const products = [
   "name": "Streax Canvo Line Hair Straightening Kit (Professional)",
   "category": "Hair Care",
   "subcategory": "Straightening Kit",
-  "price": 225,
+  "price": 950,
   "mrp": 265,
   "discount": 15,
   "showDiscount": true,
@@ -477,29 +461,13 @@ const products = [
   ],
   "description": "Streax Canvo Line Hair Straightening Kit includes both hair straightening and neutralizing creams for salon-quality straight, smooth hair. With Kera-Charge Complex."
 },
-{
-  "id": 51,
-  "name": "Berina Hair Straightener Cream Kit",
-  "category": "Hair Care",
-  "subcategory": "Straightening Kit",
-  "price": 290,
-  "mrp": 350,
-  "discount": 17,
-  "showDiscount": true,
-  "bestseller": false,
-  "featured": false,
-  "images": [
-    "IMG-20250812-WA0051.jpg",
-    "https://via.placeholder.com/300x300?text=Berina+Straightener"
-  ],
-  "description": "Berina Hair Straightener Cream Kit for resilient hair with fixer neutralizer. Delivers lasting straight hair and smooth finish with professional salon results."
-},
+
 {
   "id": 52,
   "name": "Matrix Opti Straight Conditioning Straightening System",
   "category": "Hair Care",
   "subcategory": "Straightening Kit",
-  "price": 330,
+  "price": 720,
   "mrp": 390,
   "discount": 15,
   "showDiscount": true,
@@ -551,7 +519,7 @@ const products = [
   "name": "Park Avenue Good Morning Shaving Cream",
   "category": "Face Care",
   "subcategory": "Shaving Cream",
-  "price": 25,
+  "price": 65,
   "mrp": 70,
   "discount": 21,
   "showDiscount": true,
@@ -587,7 +555,7 @@ const products = [
   "name": "Chinar Shaving Cream (Cool Moisturizing)",
   "category": "Face Care",
   "subcategory": "Shaving Cream",
-  "price": 20,
+  "price": 25,
   "mrp": 45,
   "discount": 22,
   "showDiscount": true,
@@ -605,7 +573,7 @@ const products = [
   "name": "Old Spice Lather Shaving Cream (Fresh Lime)",
   "category": "Face Care",
   "subcategory": "Shaving Cream",
-  "price": 6,
+  "price": 72,
   "mrp": 80,
   "discount": 19,
   "showDiscount": true,
@@ -745,7 +713,7 @@ const products = [
   "name": "O3+ Alpha Men D-Tan Scrub (Hyaluronic & Mint)",
   "category": "Face Care",
   "subcategory": "Face Scrub",
-  "price": 165,
+  "price": 130,
   "mrp": 195,
   "discount": 15,
   "showDiscount": true,
@@ -762,9 +730,9 @@ const products = [
   "name": "O3+ Professional D-Tan Pack",
   "category": "Face Care",
   "subcategory": "Face Pack",
-  "price": 620,
-  "mrp": 690,
-  "discount": 10,
+  "price": 1317,
+  "mrp": 1550,
+  "discount": 15,
   "showDiscount": true,
   "bestseller": true,
   "featured": false,
@@ -797,9 +765,9 @@ const products = [
   "name": "O3+ Collagen Vitamin-C Gel Kit (No Ammonia Formula)",
   "category": "Face Care",
   "subcategory": "Facial Kit",
-  "price": 880,
-  "mrp": 999,
-  "discount": 12,
+  "price": 705,
+  "mrp": 830,
+  "discount": 15,
   "showDiscount": true,
   "bestseller": false,
   "featured": false,
@@ -813,9 +781,9 @@ const products = [
   "name": "O3+ Professional Bridal Facial Kit & Shine & Glow Kit (Single Use)",
   "category": "Face Care",
   "subcategory": "Facial Kit",
-  "price": 135,
-  "mrp": 200,
-  "discount": 16,
+  "price": 680,
+  "mrp": 830,
+  "discount": 25,
   "showDiscount": true,
   "bestseller": true,
   "featured": false,
@@ -904,7 +872,7 @@ const products = [
   "name": "Kamill Men's Beard Color (Natural Brown 4)",
   "category": "Beard Care",
   "subcategory": "Beard Color",
-  "price": 185,
+  "price": 110,
   "mrp": 210,
   "discount": 12,
   "showDiscount": true,
@@ -968,6 +936,7 @@ const products = [
   ],
   "description": "Vi2 Super Platinum Razor Blades Salon Pack with 200 imported steel blades. Professional quality for barbers and salons, offering faster, sharper, and smoother shaves."
 },
+
 {
   "id": 64,
   "name": "Gillette Wilkinson Sword Razor Blades Salon Pack (Pack of 4 x 100 Blades)",
@@ -985,6 +954,520 @@ const products = [
   ],
   "description": "Gillette Wilkinson Sword Razor Blades Salon Pack contains 4 boxes of 100 blades each. Premium quality blades for professional barbers and heavy users."
 },
+
+  {
+    "id": 65,
+    "name": "O3+ Professional D-Tan Pack",
+    "category": "Face Care",
+    "subcategory": "Face Pack",
+    "price": 1317,
+    "mrp": 1550,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": true,
+    "featured": false,
+    "images": [
+      "IMG-20250812-WA0062.jpg",
+      "https://via.placeholder.com/300x300?text=O3%2B%20Professional%20D-Tan%20Pack"
+    ],
+    "description": "O3+ Professional D-Tan Pack is effective for tan removal, brightening, and deep cleansing. Suitable for all skin types and gives instant visible brightness."
+  },
+  {
+    "id": 66,
+    "name": "OxyLife Natural Radiance 5 Creme Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9111.JPG",
+      "https://via.placeholder.com/300x300?text=OxyLife%20Natural%20Radiance%205"
+    ],
+    "description": "Salon professional creme bleach kit designed for instant radiance and tan blending; suitable for salon-style bleaching care."
+  },
+  {
+    "id": 67,
+    "name": "Vitamin E Facial Essence Capsules",
+    "category": "Face Care",
+    "subcategory": "Serum Capsules",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9107.JPG",
+      "https://via.placeholder.com/300x300?text=Vitamin%20E%20Capsules"
+    ],
+    "description": "Vitamin E facial essence capsules used like a serum for nourishing and conditioning the skin, generally applied at night care."
+  },
+  {
+    "id": 68,
+    "name": "Astaberry Professional Skin Whitening Gel (Mulberry)",
+    "category": "Face Care",
+    "subcategory": "Face Gel",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9105.WEBP",
+      "https://via.placeholder.com/300x300?text=Astaberry%20Skin%20Whitening%20Gel"
+    ],
+    "description": "Professional mulberry skin whitening gel formulated for lightening and brightening facials as part of salon skin therapy."
+  },
+  {
+    "id": 69,
+    "name": "Oxylife Men Creme Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 170,
+    "mrp": 200,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9112.JPG",
+      "https://via.placeholder.com/300x300?text=Oxylife+Men+Bleach"
+    ],
+    "description": "Power-packed creme bleach specially formulated for tough male facial hair; lightens hair in 10 minutes while keeping skin irritation-free."
+  },
+  {
+    "id": 70,
+    "name": "VLCC Insta Glow Gold Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 195,
+    "mrp": 230,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": true,
+    "featured": false,
+    "images": [
+      "IMG_9113.JPG",
+      "https://via.placeholder.com/300x300?text=VLCC+Gold+Bleach"
+    ],
+    "description": "Colloidal gold enriched bleach with pre-bleach cream & post-bleach pack for glowing, radiant fairness in one easy session."
+  },
+  {
+    "id": 71,
+    "name": "VLCC Insta Glow Diamond Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 210,
+    "mrp": 250,
+    "discount": 16,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9114.JPG",
+      "https://via.placeholder.com/300x300?text=VLCC+Diamond+Bleach"
+    ],
+    "description": "Infused with colloidal diamond sparkle, this bleach lightens facial hair and delivers sparkling fairness along with pre & post care sachets."
+  },
+  {
+    "id": 72,
+    "name": "FEM Saffron & Milk Crème Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9115.JPG",
+      "https://via.placeholder.com/300x300?text=FEM%20Saffron%20%26%20Milk%20Bleach"
+    ],
+    "description": "Gentle crème bleach with saffron and milk designed for healthy glow and tan blending; suitable for facial hair lightening."
+  },
+  {
+    "id": 73,
+    "name": "FEM Turmeric & Milk Crème Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9116.jpeg",
+      "https://via.placeholder.com/300x300?text=FEM%20Turmeric%20%26%20Milk%20Bleach"
+    ],
+    "description": "Turmeric and milk based crème bleach aimed at soft glow, dullness reduction, and even-looking tone with facial hair lightening."
+  },
+  {
+    "id": 74,
+    "name": "GiGi Diamond Bleach Cream",
+    "category": "Face Care",
+    "subcategory": "Bleach Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9117.JPG",
+      "https://via.placeholder.com/300x300?text=GiGi%20Diamond%20Bleach%20Cream"
+    ],
+    "description": "Salon-style diamond bleach cream formulated to lighten facial hair appearance and promote a bright, polished look."
+  },
+  {
+    "id": 75,
+    "name": "GiGi Gold Bleach Cream",
+    "category": "Face Care",
+    "subcategory": "Bleach Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9118.JPG",
+      "https://via.placeholder.com/300x300?text=GiGi%20Gold%20Bleach%20Cream"
+    ],
+    "description": "Gold bleach cream intended for instant glow looks while helping blend facial hair with skin tone."
+  },
+  
+  {
+    "id": 76,
+    "name": "D-Tan Bleach Cream – Professional Quality",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 204,
+    "mrp": 240,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9121.JPG",
+      "https://via.placeholder.com/300x300?text=D-Tan+Bleach+Cream"
+    ],
+    "description": "Smooth & tightens skin while removing sun-tan; suitable for all skin types. Patch-test advised; avoid soap for 12 h post-use."
+  },
+  {
+    "id": 77,
+    "name": "Oxylife De-Tan Salon Professional Bleach",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 340,
+    "mrp": 400,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": true,
+    "featured": false,
+    "images": [
+      "IMG_9122.JPG",
+      "https://via.placeholder.com/300x300?text=Oxylife+De-Tan+Bleach"
+    ],
+    "description": "500 g mega-jar enriched with milk, honey & kojic acid; bleaches facial/body hair while visibly reducing tan and dark spots."
+  },
+  {
+    "id": 78,
+    "name": "ASSION Fruit Bleach Cream – Extra Fairness",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 153,
+    "mrp": 180,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9120.JPG",
+      "https://via.placeholder.com/300x300?text=ASSION+Fruit+Bleach"
+    ],
+    "description": "Fruit extracts deliver extra fairness while gently lightening unwanted hair; quick 15-minute salon-like finish at home."
+  },
+  {
+    "id": 79,
+    "name": "OxyLife Tan Clean De-Tan System",
+    "category": "Face Care",
+    "subcategory": "De-Tan Kit",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9123.jpeg",
+      "https://via.placeholder.com/300x300?text=OxyLife%20Tan%20Clean%20De-Tan%20System"
+    ],
+    "description": "Pure oxygen de-tan system with scrub and face pack designed to reduce tan, brighten, and even out skin tone."
+  },
+  {
+    "id": 80,
+    "name": "VLCC Skin Defense Mud Face Pack",
+    "category": "Face Care",
+    "subcategory": "Face Pack",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9124.JPG",
+      "https://via.placeholder.com/300x300?text=VLCC%20Mud%20Face%20Pack"
+    ],
+    "description": "Mud-based multipurpose face pack that deeply cleanses impurities, helps firm skin, and supports a brighter appearance."
+  },
+  {
+    "id": 81,
+    "name": "VLCC Pista Massage Cream",
+    "category": "Face Care",
+    "subcategory": "Massage Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9125.JPG",
+      "https://via.placeholder.com/300x300?text=VLCC%20Pista%20Massage%20Cream"
+    ],
+    "description": "Multi-action facial massage cream for normal to dry skin that provides hydration and a youthful glow during home facials."
+  },
+  {
+    "id": 82,
+    "name": "Mix Fruit & Haldi Chandan Massage Cream (Duo)",
+    "category": "Face Care",
+    "subcategory": "Massage Cream",
+    "price": null,
+    "mrp": null,
+    "discount": 0,
+    "showDiscount": false,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9126.JPG",
+      "https://via.placeholder.com/300x300?text=Mix%20Fruit%20%26%20Haldi%20Chandan%20Massage%20Cream"
+    ],
+    "description": "Duo of mix-fruit and haldi–chandan facial massage creams typically used in salon facials for nourishment, glow, and a relaxing massage experience."
+  },
+  {
+    "id": 83,
+    "name": "Raaga Professional De-Tan Cream with Kojic & Milk",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 238,
+    "mrp": 280,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9133.JPG",
+      "https://via.placeholder.com/300x300?text=Raaga+De-Tan+Cream"
+    ],
+    "description": "Salon-grade de-tan formula enriched with kojic acid and milk that gently bleaches facial hair while fading sun-tan for an even, radiant complexion."
+  },
+  {
+    "id": 84,
+    "name": "ABH Nature’s Touch D-Tan Face Pack",
+    "category": "Face Care",
+    "subcategory": "Face Pack",
+    "price": 255,
+    "mrp": 300,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": true,
+    "featured": false,
+    "images": [
+      "IMG_9129.JPG",
+      "https://via.placeholder.com/300x300?text=ABH+D-Tan+Pack"
+    ],
+    "description": "Paraben-free, sulfate-free & cruelty-free pack that removes tan, brightens skin instantly; use 2-3 times a week for best glow."
+  },
+  {
+    "id": 85,
+    "name": "Ayur Herbals Massage Cream with Aloe Vera & Vitamin-E",
+    "category": "Face Care",
+    "subcategory": "Massage Cream",
+    "price": 204,
+    "mrp": 240,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9130.JPG",
+      "https://via.placeholder.com/300x300?text=Ayur+Massage+Cream"
+    ],
+    "description": "Herbal massage cream enriched with aloe-vera and extra vitamin-E that nourishes, improves blood circulation and leaves skin soft & supple."
+  },
+  {
+    "id": 86,
+    "name": "Ayur Herbals Skin Toner with Aloe Vera & Rose",
+    "category": "Face Care",
+    "subcategory": "Toner",
+    "price": 170,
+    "mrp": 200,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9132.JPG",
+      "https://via.placeholder.com/300x300?text=Ayur+Skin+Toner"
+    ],
+    "description": "pH-balanced toner infused with aloe-vera & rose water that fights acne, tightens pores and gives a perfect natural glow for all skin types."
+  },
+  {
+    "id": 87,
+    "name": "Raaga Professional De-Tan Removal Cream",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 680,
+    "mrp": 800,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": true,
+    "featured": false,
+    "images": [
+      "IMG_9134.JPG",
+      "https://via.placeholder.com/300x300?text=Raaga+Pro+De-Tan+Cream"
+    ],
+    "description": "500 g salon-size, dermatologically-tested tan-removal cream with kojic & milk. Peroxide, hydroquinone & sulphate free—safe for all skin types."
+  },
+  {
+    "id": 88,
+    "name": "Raaga De-Tan Cream Benefits Pack",
+    "category": "Face Care",
+    "subcategory": "Bleach",
+    "price": 238,
+    "mrp": 280,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9135.JPG",
+      "https://via.placeholder.com/300x300?text=Raaga+De-Tan+Benefits"
+    ],
+    "description": "Multi-action tan cream that minimises dark spots, removes tanning, hydrates, lightens facial hair & reduces pigmentation in one step."
+  },
+  {
+    "id": 89,
+    "name": "Kami Herbal Powder Hair Colour – Flame Red",
+    "category": "Hair Color",
+    "subcategory": "Powder Hair Color",
+    "price": 255,
+    "mrp": 300,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9136.JPG",
+      "https://via.placeholder.com/300x300?text=Kami+Flame+Red+Pack"
+    ],
+    "description": "Herbal-based permanent powder hair colour in vibrant Flame Red 0.6. Nourishing herbs protect hair while delivering ultra-bright, long-lasting red tone. Pack of 6 sachets."
+  },
+  {
+    "id": 90,
+    "name": "Kami Herbal Powder Hair Colour – Flame Red Single",
+    "category": "Hair Color",
+    "subcategory": "Powder Hair Color",
+    "price": 51,
+    "mrp": 60,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9137.JPG",
+      "https://via.placeholder.com/300x300?text=Kami+Flame+Red+Single"
+    ],
+    "description": "Single-use sachet of herbal permanent Flame Red 0.6 powder hair colour. Enriched with nourishing herbs for brilliant, damage-free red shine."
+  },
+
+  {
+    "id": 91,
+    "name": "Vals Disposable Shaving Razor",
+    "category": "Men's Grooming",
+    "subcategory": "Razor",
+    "price": 25,
+    "mrp": 30,
+    "discount": 17,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9141.JPG",
+      "https://via.placeholder.com/300x300?text=Vals+Razor"
+    ],
+    "description": "Single-use shaving razor for a quick, clean & nick-free shave while travelling or at home."
+  },
+  {
+    "id": 92,
+    "name": "Lover Professional Parlor Shaver (CT & Sliding)",
+    "category": "Salon Tools",
+    "subcategory": "Shaver",
+    "price": 425,
+    "mrp": 500,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": true,
+    "featured": false,
+    "images": [
+      "IMG_9142.JPG",
+      "https://via.placeholder.com/300x300?text=Lover+Pro+Shaver"
+    ],
+    "description": "Corded salon-grade shaver that delivers perfection in your hand; available in CT & sliding models for barbers and beauty parlours."
+  },
+  {
+    "id": 93,
+    "name": "Amar Professional Shaver with Brush",
+    "category": "Salon Tools",
+    "subcategory": "Shaver",
+    "price": 340,
+    "mrp": 400,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9143.JPG",
+      "https://via.placeholder.com/300x300?text=Amar+Shaver+Brush"
+    ],
+    "description": "Light-weight professional shaver (Regd. No. 602504) supplied with cleaning brush for smooth, irritation-free grooming sessions."
+  },
+  {
+    "id": 94,
+    "name": "Lily Barber Hi-Finish Razor",
+    "category": "Salon Tools",
+    "subcategory": "Razor",
+    "price": 85,
+    "mrp": 100,
+    "discount": 15,
+    "showDiscount": true,
+    "bestseller": false,
+    "featured": false,
+    "images": [
+      "IMG_9139.JPG",
+      "https://via.placeholder.com/300x300?text=Lily+Barber+Razor"
+    ],
+    "description": "Hi-quality barber razor designed for precise edging and clean shaves; comfortable grip for all-day salon use."
+  },
+
 
 ];
 

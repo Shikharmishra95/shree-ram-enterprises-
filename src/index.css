@@ -1,4 +1,8 @@
 /* Reset & global responsive fix */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html, body, #root {
   width: 100%;
   max-width: 100vw;
