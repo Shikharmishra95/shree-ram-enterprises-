@@ -1,16 +1,16 @@
+// src/components/Header.jsx
 import React, { useState } from "react";
 import { FaSearch, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import "./Header.css";
 
-function Header({ onSearch, cartItemCount, onCartClick }) {
-  const [searchTerm, setSearchTerm] = useState("");
+function Header({ searchTerm, setSearchTerm, cartItemCount = 0, onCartClick }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    onSearch && onSearch(searchTerm);
+    setShowSearchBar(false);
   };
 
   const toggleSearchBar = () => setShowSearchBar((prev) => !prev);
@@ -21,13 +21,11 @@ function Header({ onSearch, cartItemCount, onCartClick }) {
     <>
       <header className="header">
         <div className="header-inner">
-          {/* Logo & Brand */}
           <div className="header-logo">
             <img src={logo} alt="Logo" className="logo-img" />
             <span className="brand-text">Shree Ram Enterprises</span>
           </div>
 
-          {/* Desktop Search Bar */}
           <form className="search-form desktop" onSubmit={handleSearch} noValidate>
             <input
               type="text"
@@ -42,9 +40,7 @@ function Header({ onSearch, cartItemCount, onCartClick }) {
             </button>
           </form>
 
-          {/* Icons */}
           <div className="header-icons">
-            {/* Mobile Search Toggle */}
             <button
               className="icon-btn mobile"
               aria-label="Toggle Search"
@@ -53,20 +49,17 @@ function Header({ onSearch, cartItemCount, onCartClick }) {
               <FaSearch />
             </button>
 
-            {/* Cart */}
             <button className="icon-btn" aria-label="View Cart" onClick={onCartClick}>
               <FaShoppingCart />
               {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
             </button>
 
-            {/* Menu */}
             <button className="icon-btn" aria-label="Open Menu" onClick={openSidebar}>
               <FaBars />
             </button>
           </div>
         </div>
 
-        {/* Mobile Search Bar */}
         {showSearchBar && (
           <form className="search-form mobile" onSubmit={handleSearch} noValidate>
             <input
@@ -85,10 +78,11 @@ function Header({ onSearch, cartItemCount, onCartClick }) {
         )}
       </header>
 
-      {/* Sidebar Overlay */}
-      <div className={`sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={closeSidebar} />
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? "open" : ""}`}
+        onClick={closeSidebar}
+      />
 
-      {/* Sidebar Menu */}
       <aside
         className={`sidebar-menu ${sidebarOpen ? "open" : ""}`}
         role="dialog"
@@ -101,32 +95,22 @@ function Header({ onSearch, cartItemCount, onCartClick }) {
         >
           <FaTimes />
         </button>
+
         <div className="owner-details">
           <h3>Owner Details</h3>
-          <p>
-            <strong>Name:</strong> Shree Ram
-          </p>
-          <p>
-            <strong>Address:</strong> 123 Temple Road, City
-          </p>
-          <p>
-            <strong>Phone:</strong> +91 12345 67890
-          </p>
+          <p><strong>Name:</strong> Ujjwal Mishra</p>
+          <p><strong>Address:</strong> Unnao</p>
+          <p><strong>Phone:</strong> +91 8840542840</p>
           <p>
             <strong>Email:</strong> info@shreeramenterprises.com
           </p>
         </div>
+
         <nav className="sidebar-nav">
           <ul>
-            <li>
-              <a href="/">Home</a>
-            </li>
-            <li>
-              <a href="/featured">Featured</a>
-            </li>
-            <li>
-              <a href="/contact">Contact Us</a>
-            </li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/featured">Featured</a></li>
+            <li><a href="/contact">Contact Us</a></li>
           </ul>
         </nav>
       </aside>
