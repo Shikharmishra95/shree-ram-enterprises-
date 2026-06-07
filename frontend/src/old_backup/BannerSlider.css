@@ -1,0 +1,55 @@
+/* Outer container: center + hard max width */
+.banner-wrap {
+  width: clamp(300px, 92vw, 1000px);       /* min, fluid, max */
+  margin-inline: auto;                     /* center horizontally */
+  padding-inline: clamp(8px, 3vw, 20px);   /* gentle gutters on large screens */
+}
+
+/* Frame defines the visible box and height via aspect-ratio */
+.banner-frame {
+  position: relative;
+  aspect-ratio: 21 / 9;                    /* slim banner on desktops */
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f3f5f9;
+  box-shadow: 0 10px 30px -18px rgba(20, 40, 80, 0.35);
+}
+
+/* Ensure Swiper uses frame size */
+.banner-wrap .banner-swiper,
+.banner-wrap .banner-swiper .swiper-wrapper,
+.banner-wrap .banner-swiper .swiper-slide {
+  width: 100%;
+  height: 100%;
+}
+
+/* Image fits nicely without distortion */
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* fill box while keeping ratio */
+  object-position: center; /* focus center */
+  display: block;
+}
+
+/* Small screens: keep 16:9 and full width feel */
+@media (max-width: 640px) {
+  .banner-wrap {
+    width: 100%;
+    padding-inline: 10px;
+  }
+  .banner-frame {
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+  }
+}
+
+/* Medium screens: thoda taller for balance */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .banner-frame { aspect-ratio: 2 / 1; }
+}
+
+/* Very large screens: tighter container so banner never looks too wide */
+@media (min-width: 1280px) {
+  .banner-wrap { width: clamp(720px, 72vw, 960px); }
+}

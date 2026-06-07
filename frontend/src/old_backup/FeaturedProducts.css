@@ -1,0 +1,18 @@
+/* Featured Products grid same as All Products grid */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* desktop default */
+  gap: 15px;
+}
+
+@media (max-width: 1024px) {
+  .featured-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr); /* mobile: 2 products per row */
+  }
+}
