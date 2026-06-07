@@ -13,6 +13,7 @@ import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
 import Payment from './pages/Payment';
 import { CartProvider } from './context/CartContext';
+import BottomNavbar from './components/BottomNavbar';
 
 function PublicRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -122,7 +123,10 @@ export default function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
-          <AppRoutes />
+          <div className="min-h-screen flex flex-col pb-20 md:pb-0 relative">
+            <AppRoutes />
+            <BottomNavbar />
+          </div>
         </CartProvider>
       </AuthProvider>
     </Router>

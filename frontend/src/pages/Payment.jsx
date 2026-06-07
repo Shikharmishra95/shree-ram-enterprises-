@@ -156,7 +156,7 @@ export default function Payment() {
       <nav className="bg-surface-light border-b border-border py-3.5 shadow-xs">
         <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#25D366] rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-sm">S</div>
+            <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-sm">S</div>
             <span className="font-bold text-text-primary tracking-tight">Shree Ram Pay <span className="text-primary font-bold text-[10px] border border-primary/20 px-1.5 py-0.5 rounded ml-1 bg-primary/5">Hosted</span></span>
           </div>
           <Link to="/cart" className="text-xs font-bold text-text-muted hover:text-text-primary flex items-center gap-1 transition-colors">

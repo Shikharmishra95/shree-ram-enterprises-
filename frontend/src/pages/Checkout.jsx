@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import API from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, MapPin, Plus, Edit3, X, Check, Lock, CheckCircle2, AlertTriangle, Phone } from 'lucide-react';
+import { ArrowLeft, MapPin, Plus, Edit3, X, Check, Lock, CheckCircle2, AlertTriangle, Phone, LogOut } from 'lucide-react';
 
 export default function Checkout() {
   const { user, logout } = useAuth();
@@ -202,10 +202,12 @@ export default function Checkout() {
               <span className="text-sm font-bold text-slate-700">Back to Store</span>
             </Link>
 
-            <div className="flex items-center gap-3">
-              <Link to="/profile" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity cursor-pointer">
-                <div className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-xs">
-                  {user?.username?.charAt(0).toUpperCase()}
+            <div className="flex items-center gap-2.5">
+              <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
+                  <span className="text-xs font-bold text-primary">
+                    {user?.username?.charAt(0).toUpperCase()}
+                  </span>
                 </div>
                 <div className="text-left leading-none hidden sm:block">
                   <p className="text-xs font-bold text-slate-850">{user?.username}</p>
@@ -214,9 +216,10 @@ export default function Checkout() {
               </Link>
               <button 
                 onClick={handleLogout}
-                className="px-3.5 py-1.5 text-xs font-bold text-rose-500 border border-rose-100 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                className="p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                title="Logout"
               >
-                Logout
+                <LogOut className="w-4 h-4" />
               </button>
             </div>
           </div>

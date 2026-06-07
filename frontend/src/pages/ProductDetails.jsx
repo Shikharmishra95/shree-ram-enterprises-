@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import API from '../services/api';
+import { LogOut } from 'lucide-react';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -107,7 +108,7 @@ export default function ProductDetails() {
               {!isAdmin && (
                 <Link 
                   to="/cart"
-                  className="relative p-2.5 text-slate-500 hover:text-primary rounded-xl hover:bg-slate-100 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                  className="hidden sm:flex relative p-2.5 text-slate-500 hover:text-primary rounded-xl hover:bg-slate-100 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
@@ -142,13 +143,13 @@ export default function ProductDetails() {
 
                   <span className="hidden sm:inline w-px h-5 bg-slate-200/80" />
 
-                  <Link to="/profile" className="hidden sm:flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+                  <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
                     <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
                       <span className="text-xs font-bold text-primary">
                         {user?.username?.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-left leading-none">
+                    <div className="hidden sm:block text-left leading-none">
                       <p className="text-xs font-bold text-slate-800">{user?.username}</p>
                       <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">{user?.role?.replace('ROLE_', '')}</p>
                     </div>
@@ -156,10 +157,10 @@ export default function ProductDetails() {
 
                   <button
                     onClick={handleLogout}
-                    className="px-3.5 py-2 text-xs font-bold text-danger hover:bg-danger-bg rounded-xl transition-colors cursor-pointer border border-danger/10"
+                    className="p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
                     title="Logout"
                   >
-                    Logout
+                    <LogOut className="w-4 h-4" />
                   </button>
                 </>
               ) : (

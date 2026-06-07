@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import API from '../services/api';
@@ -241,6 +241,8 @@ export default function Home() {
   const { user, logout, isAuthenticated } = useAuth();
   const { totalCartItems } = useCart();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isWishlistOnly = searchParams.get('wishlist') === 'true';
 
   const isAdmin = user?.role === 'ROLE_ADMIN';
 
@@ -258,6 +260,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState('products');
 
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [wishlistIds, setWishlistIds] = useState([]);
 
   const fetchProducts = useCallback(async (pageNum = 0) => {
     setLoading(true);
@@ -278,18 +281,19 @@ export default function Home() {
     }
   }, []);
 
-  const updateWishlistCount = () => {
+  const updateWishlist = useCallback(() => {
     const saved = localStorage.getItem('wishlist');
     const wishlist = saved ? JSON.parse(saved) : [];
+    setWishlistIds(wishlist);
     setWishlistCount(wishlist.length);
-  };
+  }, []);
 
   useEffect(() => {
     fetchProducts(0);
-    updateWishlistCount();
-    window.addEventListener('wishlist-update', updateWishlistCount);
-    return () => window.removeEventListener('wishlist-update', updateWishlistCount);
-  }, [fetchProducts]);
+    updateWishlist();
+    window.addEventListener('wishlist-update', updateWishlist);
+    return () => window.removeEventListener('wishlist-update', updateWishlist);
+  }, [fetchProducts, updateWishlist]);
 
   const handleLogout = () => {
     logout();
@@ -415,6 +419,9 @@ export default function Home() {
 
   const filteredProducts = products
     .filter((product) => {
+      if (isWishlistOnly) {
+        return wishlistIds.includes(product.id);
+      }
       const groupedCat = getGroupedCategory(product.category);
       const categoryMatch = selectedCategory === 'All' || groupedCat === selectedCategory;
       const subcatMatch =
@@ -461,7 +468,7 @@ export default function Home() {
             <div className="flex items-center gap-2 sm:gap-4">
               {/* Wishlist */}
               {!isAdmin && (
-                <div className="relative p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-slate-100 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50">
+                <div className="hidden sm:flex relative p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-slate-100 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50">
                   <Heart className="w-4 h-4" />
                   {wishlistCount > 0 && (
                     <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-white">
@@ -475,7 +482,7 @@ export default function Home() {
               {!isAdmin && (
                 <Link
                   to="/cart"
-                  className="relative p-2.5 text-slate-500 hover:text-primary rounded-xl hover:bg-slate-100 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                  className="hidden sm:flex relative p-2.5 text-slate-500 hover:text-primary rounded-xl hover:bg-slate-100 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   {totalCartItems > 0 && (
@@ -512,13 +519,13 @@ export default function Home() {
                   <span className="hidden sm:inline w-px h-5 bg-slate-200/80" />
 
                   {/* User Avatar */}
-                  <Link to="/profile" className="hidden sm:flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+                  <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
                     <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
                       <span className="text-xs font-bold text-primary">
                         {user?.username?.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-left leading-none">
+                    <div className="hidden sm:block text-left leading-none">
                       <p className="text-xs font-bold text-slate-800">{user?.username}</p>
                       <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">{user?.role?.replace('ROLE_', '')}</p>
                     </div>
@@ -536,7 +543,7 @@ export default function Home() {
               ) : (
                 <Link
                   to="/login"
-                  className="px-4.5 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl cursor-pointer transition-all shadow-md shadow-primary/10"
+                  className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl cursor-pointer transition-all shadow-md shadow-primary/10"
                 >
                   Sign In
                 </Link>
@@ -549,145 +556,152 @@ export default function Home() {
       {/* ── Main Content ───────────────────────────────────────────────── */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-        {/* Header Panel */}
-        <div className="flex flex-col items-center justify-center text-center mb-12 mt-4">
-          <motion.h1
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4"
-          >
-            Premium <span className="text-primary bg-primary/5 border border-primary/10 px-3.5 py-1.5 rounded-3xl shadow-inner">Salon &amp; Cosmetic</span> Supplies
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            className="text-slate-500 max-w-xl text-sm leading-relaxed mb-8"
-          >
-            Authorized B2B distributor of professional appliances, hair styling wax, shaving kits, and premium salon tools.
-          </motion.p>
-
-          {/* Search Bar */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.25 }}
-            className="w-full max-w-2xl relative shadow-lg hover:shadow-xl rounded-2xl border border-slate-200/50 bg-white/70 backdrop-blur-xl p-2.5 flex items-center gap-2.5 mb-8 focus-within:ring-2 focus-within:ring-primary/10 focus-within:border-primary focus-within:bg-white transition-all duration-300"
-          >
-            <div className="pl-3.5 text-slate-400">
-              <Search className="w-5 h-5" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search appliances, face wash, wax, clippers, salon tools..."
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); if (isAllCategoriesMode) setViewMode('products'); }}
-              className="flex-grow bg-transparent border-0 outline-none text-slate-800 placeholder-slate-400 text-sm py-1.5"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </motion.div>
-
-          {/* ── Banner Slider — between Search Bar and Category Circles ── */}
-          <BannerSlider />
-
-          {/* ── Category Circle Selectors ─────────────────────────────── */}
-          <div className="w-full mb-4 mt-2">
-            <h3 className="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Shop by Category</h3>
-            <div className="flex items-start gap-5 overflow-x-auto py-3 scrollbar-none justify-start sm:justify-center">
-
-              {/* 1st: All Products */}
-              <button
-                onClick={() => handleCategoryCircleClick('All')}
-                className="flex flex-col items-center gap-2 cursor-pointer focus:outline-none shrink-0 group"
-              >
-                <div className={`w-[72px] h-[72px] rounded-full border-2 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 transition-all duration-300 ${
-                  activeCircle === 'All'
-                    ? 'border-primary ring-4 ring-primary/15 scale-105 shadow-md'
-                    : 'border-slate-200 group-hover:border-primary/40 shadow-xs'
-                }`}>
-                  <ShoppingBag className={`w-7 h-7 transition-colors ${activeCircle === 'All' ? 'text-primary' : 'text-slate-400 group-hover:text-primary/70'}`} />
-                </div>
-                <span className={`text-[11px] font-bold whitespace-nowrap transition-colors ${activeCircle === 'All' ? 'text-primary font-black' : 'text-slate-500 group-hover:text-slate-800'}`}>
-                  All
-                </span>
-              </button>
-
-              {/* Middle: Dynamic main category circles */}
-              {mainCategories().map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => handleCategoryCircleClick(cat)}
-                  className="flex flex-col items-center gap-2 cursor-pointer focus:outline-none shrink-0 group"
-                >
-                  <div className={`w-[72px] h-[72px] rounded-full overflow-hidden border-2 transition-all duration-300 ${
-                    activeCircle === cat
-                      ? 'border-primary ring-4 ring-primary/15 scale-105 shadow-md'
-                      : 'border-slate-200 group-hover:border-primary/40 shadow-xs'
-                  }`}>
-                    <img
-                      src={getCategoryImage(cat, getSubcategoriesForCat(cat)[0]?.image)}
-                      alt={cat}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                  </div>
-                  <span className={`text-[11px] font-bold whitespace-nowrap transition-colors ${activeCircle === cat ? 'text-primary font-black' : 'text-slate-500 group-hover:text-slate-800'}`}>
-                    {cat}
-                  </span>
-                </button>
-              ))}
-
-              {/* Last: All Categories */}
-              <button
-                onClick={() => handleCategoryCircleClick('AllCategories')}
-                className="flex flex-col items-center gap-2 cursor-pointer focus:outline-none shrink-0 group"
-              >
-                <div className={`w-[72px] h-[72px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                  activeCircle === 'AllCategories'
-                    ? 'border-primary ring-4 ring-primary/15 scale-105 shadow-md bg-primary'
-                    : 'border-slate-200 group-hover:border-primary/40 shadow-xs bg-gradient-to-br from-slate-100 to-slate-50'
-                }`}>
-                  <LayoutGrid className={`w-7 h-7 transition-colors ${activeCircle === 'AllCategories' ? 'text-white' : 'text-slate-400 group-hover:text-primary/70'}`} />
-                </div>
-                <span className={`text-[11px] font-bold whitespace-nowrap transition-colors ${activeCircle === 'AllCategories' ? 'text-primary font-black' : 'text-slate-500 group-hover:text-slate-800'}`}>
-                  All Categories
-                </span>
-              </button>
-
-            </div>
+        {isWishlistOnly ? (
+          <div className="text-center mb-10 mt-6 animate-slide-up">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Your Wishlist</h1>
+            <p className="text-slate-500 text-sm mt-2 font-medium">Your saved professional cosmetics & supplies</p>
           </div>
+        ) : (
+          <>
+            {/* Header Panel */}
+            <div className="flex flex-col items-center justify-center text-center mb-12 mt-4">
+              <motion.h1
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4"
+              >
+                Premium <span className="text-primary bg-primary/5 border border-primary/10 px-3.5 py-1.5 rounded-3xl shadow-inner">Salon &amp; Cosmetic</span> Supplies
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.15, duration: 0.5 }}
+                className="text-slate-500 max-w-xl text-sm leading-relaxed mb-8"
+              >
+                Authorized B2B distributor of professional appliances, hair styling wax, shaving kits, and premium salon tools.
+              </motion.p>
 
-          {/* Subcategory chips removed */}
+              {/* Search Bar */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.25 }}
+                className="w-full max-w-2xl relative shadow-lg hover:shadow-xl rounded-2xl border border-slate-200/50 bg-white/70 backdrop-blur-xl p-2.5 flex items-center gap-2.5 mb-8 focus-within:ring-2 focus-within:ring-primary/10 focus-within:border-primary focus-within:bg-white transition-all duration-300"
+              >
+                <div className="pl-3.5 text-slate-400">
+                  <Search className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search appliances, face wash, wax, clippers, salon tools..."
+                  value={searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); if (isAllCategoriesMode) setViewMode('products'); }}
+                  className="flex-grow bg-transparent border-0 outline-none text-slate-800 placeholder-slate-400 text-sm py-1.5"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </motion.div>
 
-          {/* ── Sort / Count Row (only in product grid mode) ─────────── */}
-          {!isAllCategoriesMode && (
-            <div className="w-full flex justify-end pt-4 mb-8">
-              <div className="relative flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-xs">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-transparent border-0 text-xs font-bold text-slate-600 outline-none cursor-pointer pr-1"
-                >
-                  <option value="default">Sort: Default</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="rating-desc">Best Rating</option>
-                </select>
+              {/* ── Banner Slider — between Search Bar and Category Circles ── */}
+              <BannerSlider />
+
+              {/* ── Category Circle Selectors ─────────────────────────────── */}
+              <div className="w-full mb-4 mt-2">
+                <h3 className="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Shop by Category</h3>
+                <div className="flex items-start gap-5 overflow-x-auto py-3 scrollbar-none justify-start sm:justify-center">
+
+                  {/* 1st: All Products */}
+                  <button
+                    onClick={() => handleCategoryCircleClick('All')}
+                    className="flex flex-col items-center gap-2 cursor-pointer focus:outline-none shrink-0 group"
+                  >
+                    <div className={`w-[72px] h-[72px] rounded-full border-2 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 transition-all duration-300 ${
+                      activeCircle === 'All'
+                        ? 'border-primary ring-4 ring-primary/15 scale-105 shadow-md'
+                        : 'border-slate-200 group-hover:border-primary/40 shadow-xs'
+                    }`}>
+                      <ShoppingBag className={`w-7 h-7 transition-colors ${activeCircle === 'All' ? 'text-primary' : 'text-slate-400 group-hover:text-primary/70'}`} />
+                    </div>
+                    <span className={`text-[11px] font-bold whitespace-nowrap transition-colors ${activeCircle === 'All' ? 'text-primary font-black' : 'text-slate-500 group-hover:text-slate-800'}`}>
+                      All
+                    </span>
+                  </button>
+
+                  {/* Middle: Dynamic main category circles */}
+                  {mainCategories().map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => handleCategoryCircleClick(cat)}
+                      className="flex flex-col items-center gap-2 cursor-pointer focus:outline-none shrink-0 group"
+                    >
+                      <div className={`w-[72px] h-[72px] rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                        activeCircle === cat
+                          ? 'border-primary ring-4 ring-primary/15 scale-105 shadow-md'
+                          : 'border-slate-200 group-hover:border-primary/40 shadow-xs'
+                      }`}>
+                        <img
+                          src={getCategoryImage(cat, getSubcategoriesForCat(cat)[0]?.image)}
+                          alt={cat}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      </div>
+                      <span className={`text-[11px] font-bold whitespace-nowrap transition-colors ${activeCircle === cat ? 'text-primary font-black' : 'text-slate-500 group-hover:text-slate-800'}`}>
+                        {cat}
+                      </span>
+                    </button>
+                  ))}
+
+                  {/* Last: All Categories */}
+                  <button
+                    onClick={() => handleCategoryCircleClick('AllCategories')}
+                    className="flex flex-col items-center gap-2 cursor-pointer focus:outline-none shrink-0 group"
+                  >
+                    <div className={`w-[72px] h-[72px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                      activeCircle === 'AllCategories'
+                        ? 'border-primary ring-4 ring-primary/15 scale-105 shadow-md bg-primary'
+                        : 'border-slate-200 group-hover:border-primary/40 shadow-xs bg-gradient-to-br from-slate-100 to-slate-50'
+                    }`}>
+                      <LayoutGrid className={`w-7 h-7 transition-colors ${activeCircle === 'AllCategories' ? 'text-white' : 'text-slate-400 group-hover:text-primary/70'}`} />
+                    </div>
+                    <span className={`text-[11px] font-bold whitespace-nowrap transition-colors ${activeCircle === 'AllCategories' ? 'text-primary font-black' : 'text-slate-500 group-hover:text-slate-800'}`}>
+                      All Categories
+                    </span>
+                  </button>
+
+                </div>
               </div>
-            </div>
-          )}
+
+      {/* Sort / Count Row */}
+      {!isAllCategoriesMode && !isWishlistOnly && (
+        <div className="w-full flex justify-end pt-4 mb-8">
+          <div className="relative flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-xs">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-transparent border-0 text-xs font-bold text-slate-600 outline-none cursor-pointer pr-1"
+            >
+              <option value="default">Sort: Default</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating-desc">Best Rating</option>
+            </select>
+          </div>
         </div>
+      )}
+        </div>
+      </>
+    )}
 
         {/* ── Featured Products Showcase (below categories, above product grid) ── */}
-        {!isAllCategoriesMode && selectedCategory === 'All' && !searchQuery && (
+        {!isAllCategoriesMode && selectedCategory === 'All' && !searchQuery && !isWishlistOnly && (
           <FeaturedProducts />
         )}
 

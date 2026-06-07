@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { ArrowLeft, Trash2, Minus, Plus, Lock, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Trash2, Minus, Plus, Lock, ShoppingBag, LogOut } from 'lucide-react';
 
 export default function Cart() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -56,22 +56,23 @@ export default function Cart() {
             <div className="flex items-center gap-3">
               {isAuthenticated ? (
                 <>
-                  <Link to="/profile" className="hidden sm:flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
-                    <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20">
-                      <span className="text-sm font-semibold text-primary">
+                  <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                    <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
+                      <span className="text-xs font-bold text-primary">
                         {user?.username?.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-left leading-none">
+                    <div className="hidden sm:block text-left leading-none">
                       <p className="text-xs font-bold text-text-primary">{user?.username}</p>
                       <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{user?.role?.replace('ROLE_', '')}</p>
                     </div>
                   </Link>
                   <button 
                     onClick={handleLogout} 
-                    className="px-3.5 py-2 text-xs font-bold text-danger hover:bg-danger-bg rounded-xl transition-colors cursor-pointer border border-danger/10"
+                    className="p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                    title="Logout"
                   >
-                    Logout
+                    <LogOut className="w-4 h-4" />
                   </button>
                 </>
               ) : (

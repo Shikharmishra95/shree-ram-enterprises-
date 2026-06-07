@@ -3,11 +3,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, User, Mail, Phone, MapPin, Plus, Trash2, Edit3, X, Check, Save } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, Plus, Trash2, Edit3, X, Check, Save, LogOut } from 'lucide-react';
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   // Tabs: 'personal' | 'addresses'
   const [activeTab, setActiveTab] = useState('personal');
@@ -174,7 +179,7 @@ export default function Profile() {
               <span className="text-sm font-bold text-slate-700">Shree Ram Enterprises</span>
             </Link>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               {user?.role === 'ROLE_ADMIN' && (
                 <Link
                   to="/admin"
@@ -183,9 +188,20 @@ export default function Profile() {
                   Admin Console
                 </Link>
               )}
-              <div className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-xs">
-                {user?.username?.charAt(0).toUpperCase()}
+              <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
+                <span className="text-xs font-bold text-primary">
+                  {user?.username?.charAt(0).toUpperCase()}
+                </span>
               </div>
+              
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>

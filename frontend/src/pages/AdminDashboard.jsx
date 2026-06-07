@@ -54,6 +54,17 @@ export default function AdminDashboard() {
   // Tab navigation: 'analytics' | 'catalog' | 'orders' | 'add-product' | 'users' | 'banners' | 'categories' | 'featured'
   const [activeTab, setActiveTab] = useState('analytics');
 
+  // Synchronize activeTab state with URL search param "?tab="
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['analytics', 'catalog', 'orders', 'add-product', 'users', 'banners', 'categories', 'featured'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    } else if (!tabParam) {
+      setActiveTab('analytics');
+    }
+  }, [location.search]);
+
   // ── Hey Boss Modal State ──
   const [heyBossShow, setHeyBossShow] = useState(false);
   const [heyBossCount, setHeyBossCount] = useState(0);
@@ -695,23 +706,27 @@ export default function AdminDashboard() {
               <span className="text-sm font-bold text-slate-700">Back to Store</span>
             </Link>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-3">
-                <div className="w-8.5 h-8.5 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20">
-                  <span className="text-sm font-semibold text-primary">
+            <div className="flex items-center gap-2.5">
+              {/* User Avatar */}
+              <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
+                  <span className="text-xs font-bold text-primary">
                     {user?.username?.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <div className="text-left leading-none">
-                  <p className="text-xs font-bold text-slate-800">{user?.username}</p>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Admin Console</p>
+                <div className="hidden sm:block text-left leading-none">
+                  <p className="text-xs font-bold text-slate-850">{user?.username}</p>
+                  <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">Admin Console</p>
                 </div>
-              </div>
+              </Link>
+
+              {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                className="px-3.5 py-2 text-xs font-bold text-danger hover:bg-danger-bg rounded-xl transition-all cursor-pointer border border-danger/10"
+                className="p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                title="Logout"
               >
-                Logout
+                <LogOut className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -735,7 +750,10 @@ export default function AdminDashboard() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  navigate(`/admin?tab=${tab.id}`);
+                }}
                 className={`h-full border-b-2 font-bold text-xs uppercase tracking-wider flex items-center gap-2 shrink-0 cursor-pointer transition-all ${
                   activeTab === tab.id
                     ? 'border-slate-850 text-slate-900'

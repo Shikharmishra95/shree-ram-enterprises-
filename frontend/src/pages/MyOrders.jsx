@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, ShoppingBag, RefreshCw, AlertCircle,
   CheckCircle2, Package, Truck, Star, ChevronDown, ChevronUp,
-  Receipt, MapPin, CreditCard, Clock
+  Receipt, MapPin, CreditCard, Clock, LogOut
 } from 'lucide-react';
 
 // ── Tracking steps definition ─────────────────────────────────────────────────
@@ -277,10 +278,16 @@ function OrderCard({ order }) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function MyOrders() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterStatus, setFilterStatus] = useState('ALL');
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const fetchMyOrders = async () => {
     setLoading(true);
@@ -316,13 +323,38 @@ export default function MyOrders() {
               </div>
               <span className="text-base font-black text-slate-800 tracking-tight">Shree Ram Enterprises</span>
             </Link>
-            <button
-              onClick={fetchMyOrders}
-              className="p-2.5 text-slate-400 hover:text-primary rounded-xl hover:bg-slate-100 border border-slate-100 cursor-pointer transition-all"
-              title="Refresh"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
+            
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={fetchMyOrders}
+                className="p-2.5 text-slate-400 hover:text-primary rounded-xl hover:bg-slate-100 border border-slate-100 cursor-pointer transition-all"
+                title="Refresh"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+
+              {/* User Avatar */}
+              <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                <div className="w-8.5 h-8.5 bg-primary/15 rounded-full flex items-center justify-center border border-primary/20 shadow-xs">
+                  <span className="text-xs font-bold text-primary">
+                    {user?.username?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="hidden sm:block text-left leading-none">
+                  <p className="text-xs font-bold text-slate-800">{user?.username}</p>
+                  <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">{user?.role?.replace('ROLE_', '')}</p>
+                </div>
+              </Link>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="p-2.5 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 cursor-pointer transition-colors shadow-xs bg-slate-50 border border-slate-100/50"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </nav>
