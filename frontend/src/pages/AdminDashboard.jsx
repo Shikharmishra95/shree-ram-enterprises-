@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
+import HeyBossModal from '../components/HeyBossModal';
 import { 
   LayoutDashboard, List, ShoppingBag, PlusCircle, Users, LogOut, 
   RefreshCw, AlertTriangle, TrendingUp, DollarSign, Package, Edit, 
-  Trash2, X, ShieldAlert, ArrowLeft, Search, Plus, Minus
+  Trash2, X, ShieldAlert, ArrowLeft, Search, Plus, Minus,
+  Image, Star, Layers, Flag, ToggleLeft, ToggleRight, Globe, Zap
 } from 'lucide-react';
 
 // Normalizes category strings into one of the 10 professional categories
@@ -49,8 +51,30 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Tab navigation: 'analytics' | 'catalog' | 'orders' | 'add-product' | 'users'
+  // Tab navigation: 'analytics' | 'catalog' | 'orders' | 'add-product' | 'users' | 'banners' | 'categories' | 'featured'
   const [activeTab, setActiveTab] = useState('analytics');
+
+  // ── Hey Boss Modal State ──
+  const [heyBossShow, setHeyBossShow] = useState(false);
+  const [heyBossCount, setHeyBossCount] = useState(0);
+  const [heyBossShown, setHeyBossShown] = useState(false);
+
+  // ── Banner CMS State ──
+  const [banners, setBanners] = useState([]);
+  const [bannersLoading, setBannersLoading] = useState(false);
+  const [bannerForm, setBannerForm] = useState({
+    imageUrl: '', redirectUrl: '', title: '', slideSpeedMs: 4000, displayOrder: 0, isActive: true
+  });
+  const [bannerSaving, setBannerSaving] = useState(false);
+
+  // ── Category CMS State ──
+  const [cmsCategories, setCmsCategories] = useState([]);
+  const [cmsCategoriesLoading, setCmsCategoriesLoading] = useState(false);
+  const [catForm, setCatForm] = useState({ name: '', showcasePhotoUrl: '', displayOrder: 0, isActive: true });
+  const [catSaving, setCatSaving] = useState(false);
+
+  // ── Featured Products CMS State ──
+  const [featuredSaving, setFeaturedSaving] = useState(null); // productId being saved
 
   // Users state (RBAC)
   const [users, setUsers] = useState([]);
@@ -126,6 +150,43 @@ export default function AdminDashboard() {
     if (e.dataTransfer.files?.[0]) processEditProductImageFile(e.dataTransfer.files[0]);
   };
 
+  // Banner image upload state & helpers
+  const [bannerImagePreview, setBannerImagePreview] = useState('');
+  const [bannerImageDragOver, setBannerImageDragOver] = useState(false);
+
+  const processBannerImageFile = (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setBannerImagePreview(ev.target.result);
+      setBannerForm(bf => ({ ...bf, imageUrl: ev.target.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+  const handleBannerImageInput = (e) => { if (e.target.files?.[0]) processBannerImageFile(e.target.files[0]); };
+  const handleBannerImageDrop = (e) => {
+    e.preventDefault(); setBannerImageDragOver(false);
+    if (e.dataTransfer.files?.[0]) processBannerImageFile(e.dataTransfer.files[0]);
+  };
+
+  // Category Edit state & helpers
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [categoryEditImageDragOver, setCategoryEditImageDragOver] = useState(false);
+
+  const processCategoryEditImageFile = (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setEditingCategory(ec => ({ ...ec, showcasePhotoUrl: ev.target.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+  const handleCategoryEditImageInput = (e) => { if (e.target.files?.[0]) processCategoryEditImageFile(e.target.files[0]); };
+  const handleCategoryEditImageDrop = (e) => {
+    e.preventDefault(); setCategoryEditImageDragOver(false);
+    if (e.dataTransfer.files?.[0]) processCategoryEditImageFile(e.dataTransfer.files[0]);
+  };
+
   const [actionLoading, setActionLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -198,6 +259,142 @@ export default function AdminDashboard() {
       setActiveTab('users');
     }
   }, [location.pathname]);
+
+  // ── Hey Boss: Hit pending-count once on mount ──────────────────────
+  useEffect(() => {
+    if (heyBossShown) return;
+    API.get('/api/admin/orders/pending-count')
+      .then(res => {
+        const count = res.data?.pendingCount || 0;
+        setHeyBossCount(count);
+        if (count > 0) {
+          setHeyBossShow(true);
+          setHeyBossShown(true);
+        }
+      })
+      .catch(() => {}); // Silent fail — don't block dashboard
+  }, [heyBossShown]);
+
+  // ── Banner CMS ─────────────────────────────────────────────────────
+  const fetchBanners = useCallback(async () => {
+    setBannersLoading(true);
+    try {
+      const res = await API.get('/api/admin/banners');
+      setBanners(res.data || []);
+    } catch (err) {
+      console.error('Failed to fetch banners:', err);
+    } finally {
+      setBannersLoading(false);
+    }
+  }, []);
+
+  const handleCreateBanner = async (e) => {
+    e.preventDefault();
+    setBannerSaving(true);
+    try {
+      await API.post('/api/admin/banners', bannerForm);
+      setBannerForm({ imageUrl: '', redirectUrl: '', title: '', slideSpeedMs: 4000, displayOrder: 0, isActive: true });
+      setBannerImagePreview('');
+      fetchBanners();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to create banner');
+    } finally {
+      setBannerSaving(false);
+    }
+  };
+
+  const handleDeleteBanner = async (id) => {
+    if (!window.confirm('Delete this banner?')) return;
+    try {
+      await API.delete(`/api/admin/banners/${id}`);
+      fetchBanners();
+    } catch (err) {
+      alert('Failed to delete banner');
+    }
+  };
+
+  const handleToggleBannerActive = async (banner) => {
+    try {
+      await API.put(`/api/admin/banners/${banner.id}`, { isActive: !banner.isActive });
+      fetchBanners();
+    } catch (err) {
+      alert('Failed to toggle banner');
+    }
+  };
+
+  // ── Category CMS ───────────────────────────────────────────────────
+  const fetchCmsCategories = useCallback(async () => {
+    setCmsCategoriesLoading(true);
+    try {
+      const res = await API.get('/api/categories');
+      setCmsCategories(res.data || []);
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    } finally {
+      setCmsCategoriesLoading(false);
+    }
+  }, []);
+
+  // ── Auto Fetch for Active Tabs ─────────────────────────────────────
+  useEffect(() => {
+    if (activeTab === 'banners') {
+      fetchBanners();
+    } else if (activeTab === 'categories') {
+      fetchCmsCategories();
+    }
+  }, [activeTab, fetchBanners, fetchCmsCategories]);
+
+  const handleUpdateCategory = async (e) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+    setCatSaving(true);
+    try {
+      await API.put(`/api/admin/categories/${editingCategory.id}`, editingCategory);
+      setEditingCategory(null);
+      fetchCmsCategories();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to update category');
+    } finally {
+      setCatSaving(false);
+    }
+  };
+
+  const handleToggleCategoryActive = async (cat) => {
+    try {
+      await API.put(`/api/admin/categories/${cat.id}`, { isActive: !cat.isActive });
+      fetchCmsCategories();
+    } catch (err) {
+      alert('Failed to toggle category');
+    }
+  };
+
+  // ── Featured Products CMS ──────────────────────────────────────────
+  const handleToggleFeatured = async (product) => {
+    setFeaturedSaving(product.id);
+    try {
+      const updated = await API.patch(`/api/products/${product.id}/feature`, {
+        isFeatured: !product.isFeatured,
+      });
+      setProducts(prev => prev.map(p => p.id === product.id ? { ...p, isFeatured: updated.data.isFeatured } : p));
+    } catch (err) {
+      alert('Failed to update featured status');
+    } finally {
+      setFeaturedSaving(null);
+    }
+  };
+
+  const handleUpdatePriority = async (product, newPriority) => {
+    const pIdx = parseInt(newPriority);
+    if (isNaN(pIdx) || pIdx < 0) return;
+    try {
+      const updated = await API.patch(`/api/products/${product.id}/feature`, {
+        priorityIndex: pIdx,
+      });
+      setProducts(prev => prev.map(p => p.id === product.id ? { ...p, priorityIndex: updated.data.priorityIndex } : p));
+    } catch (err) {
+      console.error('Failed to update priority', err);
+    }
+  };
 
   const handleUpdateUserRole = async (userId, newRole) => {
     setActionLoading(true);
@@ -530,6 +727,9 @@ export default function AdminDashboard() {
             { id: 'orders', label: 'Orders Fulfillment', icon: ShoppingBag },
             { id: 'add-product', label: 'Add New Product', icon: PlusCircle },
             { id: 'users', label: 'User Roles (RBAC)', icon: Users },
+            { id: 'banners', label: '🖼 Banner Engine', icon: Image },
+            { id: 'categories', label: '🗂 Categories', icon: Layers },
+            { id: 'featured', label: '⭐ Featured Products', icon: Star },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -1503,6 +1703,363 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+
+      {/* HEY BOSS MODAL */}
+      <HeyBossModal
+        show={heyBossShow}
+        count={heyBossCount}
+        onClose={() => setHeyBossShow(false)}
+        onViewOrders={() => setActiveTab('orders')}
+      />
+
+      {/* TAB: BANNER ENGINE CMS */}
+      {activeTab === 'banners' && (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+          <div className="space-y-6 animate-slide-up">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Banner Engine</h2>
+                <p className="text-xs text-slate-400 font-semibold mt-1">Manage homepage promotional banners</p>
+              </div>
+              <button onClick={fetchBanners} className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-primary/20">
+                <RefreshCw className="w-3.5 h-3.5" /> Refresh
+              </button>
+            </div>
+
+            {/* Add Banner Form */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-sm font-black text-slate-700 mb-4 flex items-center gap-2"><Image className="w-4 h-4 text-primary" /> Add New Banner</h3>
+              <form onSubmit={handleCreateBanner} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Banner Image *</label>
+                  {/* Drag-and-drop / browse image uploader */}
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setBannerImageDragOver(true); }}
+                    onDragLeave={() => setBannerImageDragOver(false)}
+                    onDrop={handleBannerImageDrop}
+                    className={`relative rounded-2xl border-2 border-dashed transition-all ${
+                      bannerImageDragOver ? 'border-primary bg-primary/5'
+                      : bannerImagePreview ? 'border-emerald-400 bg-emerald-50/20'
+                      : 'border-slate-200 bg-slate-50 hover:border-primary/50'
+                    }`}
+                  >
+                    {bannerImagePreview ? (
+                      <div className="relative">
+                        <img src={bannerImagePreview} alt="Preview" className="w-full h-32 object-contain rounded-2xl bg-white p-2" />
+                        <button type="button" onClick={() => { setBannerImagePreview(''); setBannerForm(bf => ({ ...bf, imageUrl: '' })); }}
+                          className="absolute top-2 right-2 w-7 h-7 bg-black/50 hover:bg-black text-white rounded-full flex items-center justify-center cursor-pointer">
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                        <div className="absolute bottom-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">✓ Image Ready</div>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center gap-2 py-6 px-4 cursor-pointer">
+                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+                          <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                          </svg>
+                        </div>
+                        <p className="text-xs font-bold text-slate-500">Drop image here or <span className="text-primary">browse files</span></p>
+                        <p className="text-[10px] text-slate-400">PNG, JPG, WEBP supported</p>
+                        <input type="file" accept="image/*" onChange={handleBannerImageInput} className="sr-only" />
+                      </label>
+                    )}
+                  </div>
+                  {/* Also allow URL fallback */}
+                  <input
+                    type="text"
+                    value={bannerImagePreview ? '' : bannerForm.imageUrl}
+                    onChange={(e) => { setBannerForm(bf => ({ ...bf, imageUrl: e.target.value })); setBannerImagePreview(''); }}
+                    placeholder="Or paste banner image URL here..."
+                    className="w-full mt-2 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-slate-800 focus:bg-white transition-all font-semibold outline-none text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Title (optional)</label>
+                  <input type="text" placeholder="Summer Sale!"
+                    value={bannerForm.title} onChange={e => setBannerForm({...bannerForm, title: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-semibold outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Redirect URL</label>
+                  <input type="text" placeholder="/category/hair-care or https://..."
+                    value={bannerForm.redirectUrl} onChange={e => setBannerForm({...bannerForm, redirectUrl: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-semibold outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Slide Speed (ms)</label>
+                  <input type="number" min="1000" max="15000" step="500"
+                    value={bannerForm.slideSpeedMs} onChange={e => setBannerForm({...bannerForm, slideSpeedMs: parseInt(e.target.value)})}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-semibold outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Display Order</label>
+                  <input type="number" min="0"
+                    value={bannerForm.displayOrder} onChange={e => setBannerForm({...bannerForm, displayOrder: parseInt(e.target.value)})}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-semibold outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10" />
+                </div>
+                <div className="sm:col-span-2 flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked={bannerForm.isActive} onChange={e => setBannerForm({...bannerForm, isActive: e.target.checked})}
+                      className="w-4 h-4 rounded accent-primary cursor-pointer" />
+                    <span className="text-xs font-bold text-slate-700">Active (visible on homepage)</span>
+                  </label>
+                  <button type="submit" disabled={bannerSaving}
+                    className="px-6 py-2.5 bg-primary text-white rounded-xl text-xs font-black cursor-pointer disabled:opacity-60 hover:shadow-lg hover:shadow-primary/25 active:scale-95 transition-all">
+                    {bannerSaving ? 'Saving...' : '+ Add Banner'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Banners Table */}
+            <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm">
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <p className="text-xs font-black text-slate-600 uppercase tracking-wider">{banners.length} Banners</p>
+              </div>
+              {bannersLoading ? (
+                <div className="py-12 flex justify-center"><div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" /></div>
+              ) : banners.length === 0 ? (
+                <div className="py-12 text-center text-slate-400 text-sm font-semibold">No banners yet. Add one above.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                      <tr>
+                        <th className="px-4 py-3">Preview</th>
+                        <th className="px-4 py-3">Title / URL</th>
+                        <th className="px-4 py-3">Speed</th>
+                        <th className="px-4 py-3">Order</th>
+                        <th className="px-4 py-3 text-center">Active</th>
+                        <th className="px-4 py-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {banners.map(b => (
+                        <tr key={b.id} className="hover:bg-slate-50/40 transition-colors">
+                          <td className="px-4 py-3">
+                            <img src={b.imageUrl} alt="" className="w-16 h-10 object-cover rounded-lg border border-slate-200" onError={e => e.target.style.display='none'} />
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="font-bold text-slate-800 truncate max-w-[200px]">{b.title || '(No title)'}</p>
+                            <p className="text-slate-400 text-[10px] truncate max-w-[200px]">{b.redirectUrl || '—'}</p>
+                          </td>
+                          <td className="px-4 py-3 font-semibold text-slate-600">{b.slideSpeedMs}ms</td>
+                          <td className="px-4 py-3 font-semibold text-slate-600">#{b.displayOrder}</td>
+                          <td className="px-4 py-3 text-center">
+                            <button onClick={() => handleToggleBannerActive(b)} className={`w-9 h-5 rounded-full transition-all cursor-pointer ${b.isActive ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                              <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform mx-0.5 ${b.isActive ? 'translate-x-4' : 'translate-x-0'}`} />
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <button onClick={() => handleDeleteBanner(b.id)} className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-xl border border-rose-200 cursor-pointer transition-all">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* TAB: CATEGORY CUSTOMIZER */}
+      {activeTab === 'categories' && (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+          <div className="space-y-6 animate-slide-up">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Category Customizer</h2>
+                <p className="text-xs text-slate-400 font-semibold mt-1">Manage home-screen category circles with custom images</p>
+              </div>
+              <button onClick={fetchCmsCategories} className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-primary/20">
+                <RefreshCw className="w-3.5 h-3.5" /> Refresh
+              </button>
+            </div>
+
+            {/* Edit Category Form (visible only when editing) */}
+            {editingCategory && (
+              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm animate-slide-up">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-black text-slate-700 flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-primary" /> Edit Category: {editingCategory.name}
+                  </h3>
+                  <button onClick={() => setEditingCategory(null)} className="text-xs font-bold text-slate-400 hover:text-slate-600 cursor-pointer">
+                    Cancel
+                  </button>
+                </div>
+                <form onSubmit={handleUpdateCategory} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Showcase Photo *</label>
+                    {/* Drag-and-drop / browse image uploader */}
+                    <div
+                      onDragOver={(e) => { e.preventDefault(); setCategoryEditImageDragOver(true); }}
+                      onDragLeave={() => setCategoryEditImageDragOver(false)}
+                      onDrop={handleCategoryEditImageDrop}
+                      className={`relative rounded-2xl border-2 border-dashed transition-all ${
+                        categoryEditImageDragOver ? 'border-primary bg-primary/5'
+                        : editingCategory.showcasePhotoUrl ? 'border-emerald-400 bg-emerald-50/20'
+                        : 'border-slate-200 bg-slate-50 hover:border-primary/50'
+                      }`}
+                    >
+                      {editingCategory.showcasePhotoUrl ? (
+                        <div className="relative">
+                          <img src={editingCategory.showcasePhotoUrl} alt="Preview" className="w-full h-32 object-contain rounded-2xl bg-white p-2" />
+                          <button type="button" onClick={() => setEditingCategory(ec => ({ ...ec, showcasePhotoUrl: '' }))}
+                            className="absolute top-2 right-2 w-7 h-7 bg-black/50 hover:bg-black text-white rounded-full flex items-center justify-center cursor-pointer">
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                          <div className="absolute bottom-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">✓ Image Ready</div>
+                        </div>
+                      ) : (
+                        <label className="flex flex-col items-center justify-center gap-2 py-6 px-4 cursor-pointer">
+                          <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+                            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                          </div>
+                          <p className="text-xs font-bold text-slate-500">Drop image here or <span className="text-primary">browse files</span></p>
+                          <p className="text-[10px] text-slate-400">PNG, JPG, WEBP supported</p>
+                          <input type="file" accept="image/*" onChange={handleCategoryEditImageInput} className="sr-only" />
+                        </label>
+                      )}
+                    </div>
+                    {/* Also allow URL fallback */}
+                    <input
+                      type="text"
+                      value={editingCategory.showcasePhotoUrl || ''}
+                      onChange={(e) => setEditingCategory(ec => ({ ...ec, showcasePhotoUrl: e.target.value }))}
+                      placeholder="Or paste showcase image URL here..."
+                      className="w-full mt-2 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:border-slate-800 focus:bg-white transition-all font-semibold outline-none text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Display Order</label>
+                    <input type="number" min="0" value={editingCategory.displayOrder || 0} onChange={e => setEditingCategory({...editingCategory, displayOrder: parseInt(e.target.value) || 0})}
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-semibold outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10" />
+                  </div>
+                  <div className="flex items-end justify-between gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" checked={editingCategory.isActive !== false} onChange={e => setEditingCategory({...editingCategory, isActive: e.target.checked})}
+                        className="w-4 h-4 rounded accent-primary cursor-pointer" />
+                      <span className="text-xs font-bold text-slate-700">Active on Homepage</span>
+                    </label>
+                    <button type="submit" disabled={catSaving}
+                      className="px-6 py-2.5 bg-primary text-white rounded-xl text-xs font-black cursor-pointer disabled:opacity-60 hover:shadow-lg hover:shadow-primary/25 active:scale-95 transition-all">
+                      {catSaving ? 'Saving...' : 'Save Changes'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+ 
+            {/* Categories Grid */}
+            {cmsCategoriesLoading ? (
+              <div className="py-12 flex justify-center"><div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" /></div>
+            ) : cmsCategories.length === 0 ? (
+              <div className="bg-white border border-slate-100 rounded-3xl py-12 text-center text-slate-400 text-sm font-semibold">
+                No categories found. Click Refresh or restart the server to seed them.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {cmsCategories.map(cat => (
+                  <div key={cat.id} className={`bg-white border rounded-2xl p-4 text-center transition-all ${cat.isActive ? 'border-slate-100 shadow-sm' : 'border-slate-100 opacity-50'}`}>
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-slate-200 mx-auto mb-2 bg-slate-50">
+                      {cat.showcasePhotoUrl ? (
+                        <img src={cat.showcasePhotoUrl} alt={cat.name} className="w-full h-full object-cover" onError={e => { e.target.style.display='none'; }} />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-300"><Layers className="w-6 h-6" /></div>
+                      )}
+                    </div>
+                    <p className="text-xs font-black text-slate-800 truncate">{cat.name}</p>
+                    <p className="text-[10px] text-slate-400 font-semibold mb-3">Order: {cat.displayOrder}</p>
+                    <div className="flex items-center justify-center gap-2">
+                      <button onClick={() => handleToggleCategoryActive(cat)}
+                        className={`text-[9px] font-black px-2 py-1 rounded-lg cursor-pointer transition-all ${cat.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100' : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'}`}>
+                        {cat.isActive ? '✅ Active' : '⭕ Hidden'}
+                      </button>
+                      <button onClick={() => setEditingCategory(cat)} className="p-1 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg border border-primary/20 cursor-pointer">
+                        <Edit className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </main>
+      )}
+
+      {/* TAB: FEATURED PRODUCTS CMS */}
+      {activeTab === 'featured' && (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+          <div className="space-y-6 animate-slide-up">
+            <div>
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight">Priority Inventory Sorter</h2>
+              <p className="text-xs text-slate-400 font-semibold mt-1">Mark products as featured and set their display priority (1 = top). Featured products show in the 'Best Sellers' section.</p>
+            </div>
+
+            <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm">
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <p className="text-xs font-black text-slate-600 uppercase tracking-wider">{products.length} Products</p>
+                <p className="text-[10px] text-slate-400 font-semibold">{products.filter(p => p.isFeatured).length} featured</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                    <tr>
+                      <th className="px-4 py-3">Product</th>
+                      <th className="px-4 py-3 w-36">Price</th>
+                      <th className="px-4 py-3 w-28 text-center">Featured</th>
+                      <th className="px-4 py-3 w-32 text-center">Priority (1=Top)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {products.sort((a, b) => (a.priorityIndex || 100) - (b.priorityIndex || 100)).map(p => (
+                      <tr key={p.id} className={`hover:bg-slate-50/40 transition-colors ${p.isFeatured ? 'bg-amber-50/30' : ''}`}>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <img src={p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=60&q=80'} alt="" className="w-10 h-10 rounded-xl object-contain border border-slate-200 bg-slate-50" onError={e => { e.target.onerror=null; e.target.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=60&q=80'; }} />
+                            <div>
+                              <p className="font-bold text-slate-800 truncate max-w-[220px]">{p.name}</p>
+                              <p className="text-[10px] text-slate-400 truncate max-w-[220px]">{p.category}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 font-black text-slate-800">₹{Number(p.price).toLocaleString('en-IN')}</td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => handleToggleFeatured(p)}
+                            disabled={featuredSaving === p.id}
+                            className={`w-10 h-6 rounded-full transition-all cursor-pointer disabled:opacity-50 ${p.isFeatured ? 'bg-amber-400 shadow-md shadow-amber-200' : 'bg-slate-200'}`}
+                          >
+                            <div className={`w-5 h-5 bg-white rounded-full shadow-sm transition-transform mx-0.5 ${p.isFeatured ? 'translate-x-4' : 'translate-x-0'}`} />
+                          </button>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <input
+                            type="number"
+                            min="1"
+                            max="999"
+                            defaultValue={p.priorityIndex || 100}
+                            onBlur={e => handleUpdatePriority(p, e.target.value)}
+                            onKeyDown={e => { if (e.key === 'Enter') handleUpdatePriority(p, e.target.value); }}
+                            className={`w-20 px-2 py-1 text-center border rounded-lg text-xs font-bold outline-none focus:border-primary/50 transition-all ${p.isFeatured ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-slate-200 bg-slate-50 text-slate-500'}`}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      )}
 
       {/* EDIT PRODUCT MODAL DIALOG */}
       {editingProduct && (

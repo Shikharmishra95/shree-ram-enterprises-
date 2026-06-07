@@ -42,7 +42,12 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Public product endpoints
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**").permitAll()
+                        // Public CMS endpoints (banners, categories, featured)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/banners/active").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/categories/**").permitAll()
+                        // All other /api/** require authentication
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 );

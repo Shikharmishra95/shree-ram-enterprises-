@@ -1,4 +1,5 @@
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\model\User.java
+D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\BannerController.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\exception\ProductNotFoundException.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\AuthResponse.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\CartController.java
@@ -15,8 +16,12 @@ D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\OrderCon
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\UserController.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\OrderCreateRequest.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\exception\ApiException.java
+D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\CategoryController.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\EcommerceApplication.java
+D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\repository\BannerRepository.java
+D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\repository\CategoryRepository.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\repository\ProductRepository.java
+D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\model\Category.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\service\ProductService.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\config\DatabaseInitializer.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\repository\AddressRepository.java
@@ -25,6 +30,7 @@ D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\service\CartService
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\AuthController.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\config\JwtAuthenticationFilter.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\LoginRequest.java
+D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\model\Banner.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\model\Order.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\controller\CartRequest.java
 D:\Shree Ram Enterprises\src\main\java\com\ecommerce\project\exception\ErrorResponse.java

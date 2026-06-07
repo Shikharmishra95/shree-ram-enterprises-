@@ -1,6 +1,7 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.model.User;
+import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.repository.UserRepository;
 import com.ecommerce.project.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class AdminController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     /**
      * GET /api/admin/analytics
@@ -81,5 +85,23 @@ public class AdminController {
         userRepository.save(user);
 
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * GET /api/admin/orders/pending-count
+     * "Hey Boss!" interceptor — Returns count of PENDING orders.
+     * Called on admin dashboard login to show a pop-up alert.
+     */
+    @GetMapping("/orders/pending-count")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Long>> getPendingOrderCount() {
+        long pendingCount = orderRepository.countByStatus("NEW");
+        long newCount = orderRepository.countByStatus("PENDING");
+        long total = pendingCount + newCount;
+        return ResponseEntity.ok(Map.of(
+            "pendingCount", total,
+            "newOrders", pendingCount,
+            "pendingOrders", newCount
+        ));
     }
 }

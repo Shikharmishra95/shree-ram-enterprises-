@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserOrderByOrderDateDesc(User user);
+    // For "Hey Boss" pending count
+    long countByStatus(String status);
+    List<Order> findByStatusOrderByOrderDateDesc(String status);
 }

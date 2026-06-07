@@ -50,6 +50,14 @@ public class Product {
     @Column(nullable = true)
     private Double rating;
 
+    // CMS: Priority for sorting featured products (lower = higher priority)
+    @Column(name = "priority_index", nullable = true)
+    private Integer priorityIndex = 100;
+
+    // CMS: Whether this product appears in the Featured Showcase
+    @Column(name = "is_featured", nullable = true)
+    private Boolean isFeatured = false;
+
     public Product() {
     }
 
@@ -141,5 +149,21 @@ public class Product {
 
     public void setMrp(BigDecimal mrp) {
         this.mrp = mrp;
+    }
+
+    public Integer getPriorityIndex() {
+        return priorityIndex == null ? 100 : priorityIndex;
+    }
+
+    public void setPriorityIndex(Integer priorityIndex) {
+        this.priorityIndex = priorityIndex;
+    }
+
+    public Boolean getIsFeatured() {
+        return isFeatured == null ? false : isFeatured;
+    }
+
+    public void setIsFeatured(Boolean isFeatured) {
+        this.isFeatured = isFeatured;
     }
 }

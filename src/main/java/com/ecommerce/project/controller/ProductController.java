@@ -35,7 +35,7 @@ public class ProductController {
      * GET /api/products/{id}
      * Publicly accessible. Returns a single product or 404.
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(product);
@@ -56,7 +56,7 @@ public class ProductController {
      * PUT /api/products/{id}
      * Restricted to ROLE_ADMIN only.
      */
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
         Product updated = productService.updateProduct(id, product);
@@ -67,7 +67,7 @@ public class ProductController {
      * DELETE /api/products/{id}
      * Restricted to ROLE_ADMIN only.
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
@@ -78,7 +78,7 @@ public class ProductController {
      * PATCH /api/products/{id}/stock
      * Restricted to ROLE_ADMIN only.
      */
-    @PatchMapping("/{id}/stock")
+    @PatchMapping("/{id:\\d+}/stock")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> patchStock(
             @PathVariable Long id, 
@@ -88,6 +88,30 @@ public class ProductController {
             throw new IllegalArgumentException("quantityChange parameter is required");
         }
         Product updated = productService.patchStock(id, quantityChange);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * GET /api/products/featured
+     * Public endpoint. Returns isFeatured=true products sorted by priorityIndex ASC.
+     */
+    @GetMapping("/featured")
+    public ResponseEntity<java.util.List<Product>> getFeaturedProducts() {
+        java.util.List<Product> featured = productService.getFeaturedProducts();
+        return ResponseEntity.ok(featured);
+    }
+
+    /**
+     * PATCH /api/products/{id}/feature
+     * Admin endpoint. Updates isFeatured and priorityIndex for a product.
+     * Body: { "isFeatured": true, "priorityIndex": 1 }
+     */
+    @PatchMapping("/{id:\\d+}/feature")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Product> updateFeatureFlag(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Object> payload) {
+        Product updated = productService.updateFeatureFlag(id, payload);
         return ResponseEntity.ok(updated);
     }
 }

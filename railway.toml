@@ -1,0 +1,9 @@
+# Railway configuration for Spring Boot backend
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "java -jar app.jar --spring.profiles.active=prod"
+restartPolicyType = "ON_FAILURE"
+restartLimit = 3

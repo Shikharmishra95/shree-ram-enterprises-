@@ -5,6 +5,8 @@ import { useCart } from '../context/CartContext';
 import API from '../services/api';
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
+import BannerSlider from '../components/BannerSlider';
+import FeaturedProducts from '../components/FeaturedProducts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X, Heart, SlidersHorizontal, ShoppingBag, LogOut, ShieldAlert, LayoutGrid, ChevronRight } from 'lucide-react';
 
@@ -593,6 +595,9 @@ export default function Home() {
             )}
           </motion.div>
 
+          {/* ── Banner Slider — between Search Bar and Category Circles ── */}
+          <BannerSlider />
+
           {/* ── Category Circle Selectors ─────────────────────────────── */}
           <div className="w-full mb-4 mt-2">
             <h3 className="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Shop by Category</h3>
@@ -680,6 +685,11 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* ── Featured Products Showcase (below categories, above product grid) ── */}
+        {!isAllCategoriesMode && selectedCategory === 'All' && !searchQuery && (
+          <FeaturedProducts />
+        )}
 
         {/* ── ALL CATEGORIES BROWSE VIEW ─────────────────────────────── */}
         {isAllCategoriesMode && !loading && !error && (

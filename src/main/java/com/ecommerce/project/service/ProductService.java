@@ -9,6 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class ProductService {
 
@@ -25,7 +29,7 @@ public class ProductService {
 
     /**
      * Retrieve a single product by its ID.
-     * 
+     *
      * @throws ProductNotFoundException if the product does not exist.
      */
     @Transactional(readOnly = true)
@@ -39,6 +43,8 @@ public class ProductService {
      */
     @Transactional
     public Product createProduct(Product product) {
+        if (product.getPriorityIndex() == null) product.setPriorityIndex(100);
+        if (product.getIsFeatured() == null) product.setIsFeatured(false);
         return productRepository.save(product);
     }
 
@@ -64,7 +70,14 @@ public class ProductService {
         existing.setImageUrl(updatedProduct.getImageUrl());
         existing.setCategory(updatedProduct.getCategory());
         existing.setRating(updatedProduct.getRating());
-        
+        existing.setMrp(updatedProduct.getMrp());
+        // Preserve CMS fields if provided
+        if (updatedProduct.getPriorityIndex() != null) {
+            existing.setPriorityIndex(updatedProduct.getPriorityIndex());
+        }
+        if (updatedProduct.getIsFeatured() != null) {
+            existing.setIsFeatured(updatedProduct.getIsFeatured());
+        }
         return productRepository.saveAndFlush(existing);
     }
 
@@ -79,6 +92,29 @@ public class ProductService {
             throw new IllegalArgumentException("Stock quantity cannot be negative.");
         }
         existing.setStockQuantity(newStock);
+        return productRepository.save(existing);
+    }
+
+    /**
+     * Returns all products marked as featured, sorted by priorityIndex ascending.
+     */
+    @Transactional(readOnly = true)
+    public List<Product> getFeaturedProducts() {
+        return productRepository.findByIsFeaturedTrueOrderByPriorityIndexAsc();
+    }
+
+    /**
+     * Updates isFeatured and/or priorityIndex for a product via the admin CMS.
+     */
+    @Transactional
+    public Product updateFeatureFlag(Long id, Map<String, Object> payload) {
+        Product existing = getProductById(id);
+        if (payload.containsKey("isFeatured")) {
+            existing.setIsFeatured(Boolean.parseBoolean(payload.get("isFeatured").toString()));
+        }
+        if (payload.containsKey("priorityIndex")) {
+            existing.setPriorityIndex(Integer.parseInt(payload.get("priorityIndex").toString()));
+        }
         return productRepository.save(existing);
     }
 }
